@@ -1,6 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 export default function PosterSearch () {
+  const [disableSearch, setDisableSearch] = useState(true)
+  const [movieName, setMovieName] = useState('')
+
+  function handleInput ({ target: { value }}){
+    setDisableSearch(value.length < 3)
+    setMovieName(value)
+  }
+
   return (
     <>
       <section className='PosterSearch'>
@@ -18,9 +26,15 @@ export default function PosterSearch () {
               type='search'
               id='movie-name'
               name='movie-name'
+              value={movieName}
+              onChange={handleInput}
               placeholder='enter the name of a movie'
             />
-            <button id='search-button' className='searchButton'>
+            <button
+              id='search-button'
+              className='searchButton'
+              disabled={disableSearch}
+            >
               Search
             </button>
             <br />

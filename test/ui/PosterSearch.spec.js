@@ -16,7 +16,13 @@ describe('Poster Search', () => {
     return page.goto('http://localhost:3000')
   })
 
-  xit("doesn't let me search until I've typed at least 3 characters", () => {})
+  it("doesn't let me search until I've typed at least 3 characters", async () => {
+    expect(await page.$eval('#search-button', btn => btn.disabled)).toBe(true)
+    await expect(page).toFill('#movie-name', 'abc')
+    return expect(await page.$eval('#search-button', btn => btn.disabled)).toBe(
+      false
+    )
+  })
   xit("tells me when we're searching", () => {})
   xit('tells me when there are no results', () => {})
   xit('handles api errors', () => {})
