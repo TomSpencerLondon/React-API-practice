@@ -3,10 +3,23 @@ import React, { useState } from 'react'
 export default function PosterSearch () {
   const [disableSearch, setDisableSearch] = useState(true)
   const [movieName, setMovieName] = useState('')
+  const [msg, setMsg] = useState(
+    `Enter at least 3 letters from the movie's title.`
+  )
 
   function handleInput ({ target: { value }}){
     setDisableSearch(value.length < 3)
     setMovieName(value)
+  }
+
+  function handleClick (e) {
+    e.preventDefault()
+    setMsg('Searching...')
+    fetch(
+      `${process.env.REACT_APP_API_URL}?s=${encodeURIComponent(
+        movieName
+      )}&apikey=${process.env.REACT_API_KEY}`
+    )
   }
 
   return (
@@ -33,13 +46,14 @@ export default function PosterSearch () {
             <button
               id='search-button'
               className='searchButton'
+              onClick={handleClick}
               disabled={disableSearch}
             >
               Search
             </button>
             <br />
           </p>
-          <p id='msg' />
+          <p id='msg'>{msg}</p>
         </main>
         <section id='poster-grid' className='PosterGrid' />
       </section>

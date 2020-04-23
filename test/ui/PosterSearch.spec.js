@@ -23,7 +23,30 @@ describe('Poster Search', () => {
       false
     )
   })
-  xit("tells me when we're searching", () => {})
+
+  it("tells me when we're searching", async done => {
+    expect.assertions(3)
+
+    await page.setRequestInterception(true)
+
+    page.on('request', async req => {
+      if (req.url().includes('omdbapi.com')){
+        const msg = await page.$('#msg')
+        await expect(msg).toMatch('Searching...')
+
+        await req.respond({
+          headers: { 'Access-Control-Allow-Origin': '' },
+          body: JSON.stringify(dummyPosters),
+          contentType: 'application/json'
+        })
+
+        done()
+      }
+    })
+
+    await expect(page).toFill('#movie-name', 'star')
+    await expect(page).toClick('#search-button')
+  })
   xit('tells me when there are no results', () => {})
   xit('handles api errors', () => {})
   xit('handles network errors', () => {})
