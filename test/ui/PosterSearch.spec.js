@@ -51,6 +51,35 @@ describe('Poster Search', () => {
   xit('handles api errors', () => {})
   xit('handles network errors', () => {})
   xit('tells me how many results were found and how many are being displayed', () => {})
-  xit('displays all results', () => {})
+  it('displays all results', async done => {
+    expect.assertions(12)
+    await page.setRequestInterception(true)
+    page.on('request', async req => {
+      if (req.url().includes('omdbapi.com')) {
+        await req.respond({
+          headers: { 'Access-Control-Allow-Origin': '*' },
+          body: JSON.stringify(dummyPosters),
+          contentType: 'application/json'
+        })
+      }
+    })
+
+    page.on('response', async res => {
+      if (res.url().includes('omdbapi.com')) {
+        const results = dummyPosters
+        await Promise.all(
+          results.Search.map(movie =>
+            expect(page).toMatchElement(`img[src-="$movie.Poster}"]`)
+          )
+        ).then(async () => {
+          await page.setRequestInterception(false)
+          done()
+        })
+      }
+    })
+
+    await expect(page).toFill('#movie-name', 'star')
+    await expect(page).toClick('#search-button')
+  })
   xit('displays a placeholder when no poster is available', () => {})
 })
