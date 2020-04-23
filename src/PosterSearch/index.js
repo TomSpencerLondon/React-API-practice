@@ -6,6 +6,7 @@ export default function PosterSearch () {
   const [msg, setMsg] = useState(
     `Enter at least 3 letters from the movie's title.`
   )
+  const [posters, setPosters] = useState([])
 
   function handleInput ({ target: { value }}){
     setDisableSearch(value.length < 3)
@@ -19,7 +20,10 @@ export default function PosterSearch () {
       `${process.env.REACT_APP_API_URL}?s=${encodeURIComponent(
         movieName
       )}&apikey=${process.env.REACT_API_KEY}`
-    )
+    ).then(resp => resp.json())
+      .then(results => {
+        setPosters(results.Search)
+      })
   }
 
   return (
@@ -55,7 +59,16 @@ export default function PosterSearch () {
           </p>
           <p id='msg'>{msg}</p>
         </main>
-        <section id='poster-grid' className='PosterGrid' />
+        <section id='poster-grid' className='PosterGrid'>
+          {posters.map(movie => (
+            <img
+              key={movie.Title}
+              src={movie.Poster}
+              alt={movie.Title}
+              title={movie.Title}
+            />
+          ))}
+        </section>
       </section>
     </>
   )

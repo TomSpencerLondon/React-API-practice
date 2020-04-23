@@ -69,7 +69,7 @@ describe('Poster Search', () => {
         const results = dummyPosters
         await Promise.all(
           results.Search.map(movie =>
-            expect(page).toMatchElement(`img[src-="$movie.Poster}"]`)
+            expect(page).toMatchElement(`img[src="${movie.Poster}"]`)
           )
         ).then(async () => {
           await page.setRequestInterception(false)
