@@ -13,7 +13,11 @@ describe('Poster Search', () => {
   })
   beforeEach(async () => {
     await jestPuppeteer.resetPage()
-    return page.goto('http://localhost:3000')
+    const url =
+      process.env.NODE_ENV === 'build'
+    ? process.env.PROD_LOCALHOST
+        : process.env.DEV_LOCALHOST
+    return page.goto(url)
   })
 
   it("doesn't let me search until I've typed at least 3 characters", async () => {
@@ -56,17 +60,22 @@ describe('Poster Search', () => {
     await page.setRequestInterception(true)
     page.on('request', async req => {
       if (req.url().includes('omdbapi.com')) {
-        await req.respond({
-          headers: { 'Access-Control-Allow-Origin': '*' },
-          body: JSON.stringify(dummyPosters),
-          contentType: 'application/json'
-        })
+        if (process.env.NODE_ENV === 'build') {
+          await req.continue()
+        } else {
+          await req.respond({
+            headers: { 'Access-Control-Allow-Origin': '*' },
+            body: JSON.stringify(dummyPosters),
+            contentType: 'application/json'
+          })
+        }
       }
     })
-
     page.on('response', async res => {
       if (res.url().includes('omdbapi.com')) {
-        const results = dummyPosters
+        const results =
+          process.env.NODE_ENV === 'build' ? await res.json() : dummyPosters
+
         await Promise.all(
           results.Search.map(movie =>
             expect(page).toMatchElement(`img[src="${movie.Poster}"]`)
@@ -77,7 +86,6 @@ describe('Poster Search', () => {
         })
       }
     })
-
     await expect(page).toFill('#movie-name', 'star')
     await expect(page).toClick('#search-button')
   })

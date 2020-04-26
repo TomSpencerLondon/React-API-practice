@@ -16,13 +16,32 @@ export default function PosterSearch () {
   function handleClick (e) {
     e.preventDefault()
     setMsg('Searching...')
-    fetch(
-      `${process.env.REACT_APP_API_URL}?s=${encodeURIComponent(
-        movieName
-      )}&apikey=${process.env.REACT_API_KEY}`
+    setDisableSearch(true)
+    setPosters([])
+
+    fetch(`${process.env.REACT_APP_API_URL}?s=${encodeURIComponent(
+      movieName
+      )}&apikey=${process.env.REACT_APP_API_KEY}`
     ).then(resp => resp.json())
       .then(results => {
-        setPosters(results.Search)
+        if (results.Response === 'True'){
+          setMsg(
+            `Now showing the first ${results.Search.length} results of ${
+              results.totalResults
+            }`
+          )
+          setPosters(results.Search)
+          setDisableSearch(false)
+        }else {
+          if (results.Error === 'Movie not found!') {
+            setMsg(`Sorry, we couldn't find that one. Please try again.`)
+          } else {
+            setMsg(results.Error)
+          }
+        }
+      })
+      .catch(e => {
+        setMsg('Something went wrong. Please try again later')
       })
   }
 
@@ -63,7 +82,13 @@ export default function PosterSearch () {
           {posters.map(movie => (
             <img
               key={movie.Title}
-              src={movie.Poster}
+              src={
+                movie.Poster === 'N/A'
+                ? `https://via.placeholder.com/300x468?text=${encodeURIComponent(
+                  movie.Title
+                  )}`
+                  : movie.Poster
+              }
               alt={movie.Title}
               title={movie.Title}
             />
