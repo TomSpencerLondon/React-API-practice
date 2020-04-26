@@ -6,13 +6,7 @@
     "normalize.css": "^8.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
-    "@babel/plugin-transform-runtime": "^7.9.0",
-    "@babel/polyfill": "^7.8.7",
-    "expect-puppeteer": "^4.0.0",
-    "jest-puppeteer": "^4.4.0",
-    "puppeteer": "^1.12.2",
-    "serve": "^11.3.0"
+    "react-scripts": "3.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -40,7 +34,7 @@
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.9.0",
     "@babel/polyfill": "^7.8.7",
-    "expect-puppeteer": "^4.4.0",
+    "expect-puppeteer": "^4.0.0",
     "jest-puppeteer": "^4.0.0",
     "puppeteer": "^1.12.2",
     "serve": "^11.3.0"
