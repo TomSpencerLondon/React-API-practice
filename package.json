@@ -1,6 +1,6 @@
 {
   "name": "my-fave-posters",
-  "version": "0.1.0",
+  "version": "13.13.0",
   "private": true,
   "dependencies": {
     "fsevents": "^2.1.2",
